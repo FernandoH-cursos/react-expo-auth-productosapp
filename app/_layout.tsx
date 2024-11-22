@@ -1,12 +1,18 @@
+import { useEffect } from 'react';
+
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+
+import { useColorScheme } from '@/presentation/theme/hooks/useColorScheme.web';
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+//* <GestureHandlerRootView> es un componente que se utiliza para envolver toda la aplicación y habilitar los gestos en la misma.
+//* Habilita funcionalidades como el desplazamiento de la pantalla y el deslizamiento de elementos.
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -14,7 +20,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    // SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    KanitRegular: require("../assets/fonts/Kanit-Regular.ttf"),
+    KanitBold: require("../assets/fonts/Kanit-Bold.ttf"),
+    KanitThin: require("../assets/fonts/Kanit-Thin.ttf"),
   });
 
   useEffect(() => {
@@ -28,12 +37,17 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" /> */}
+        </Stack>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

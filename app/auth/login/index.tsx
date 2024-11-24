@@ -1,5 +1,15 @@
-import { KeyboardAvoidingView, useWindowDimensions, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { useState } from "react";
+
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { router } from "expo-router";
+
+import { useThemeColor } from "@/presentation/theme/hooks";
 
 import {
   ThemeButton,
@@ -7,6 +17,7 @@ import {
   ThemedTextInput,
   ThemeLink,
 } from "@/presentation/theme/components";
+import { useAuthStore } from "@/presentation/auth/store";
 
 //* <KeyboardAvoidingView> es un componente que se utiliza para ajustar automáticamente la posición de los elementos cuando el
 //* teclado aparece o desaparece.
@@ -18,13 +29,50 @@ import {
 //* El hook useWindowDimensions() permite obtener las dimensiones de la ventana del dispositivo. Se puede obtener la altura y ancho de la
 //* ventana. Es necesario para ajustar el tamaño de los elementos de la pantalla.
 
+//* El evento 'onChangeText' se dispara cuando el texto de un input cambia. Se utiliza para actualizar el estado del formulario. Por otro
+//* lado el evento 'onChange' se dispara cuando el valor de un input cambia. Se utiliza para actualizar el estado del formulario.
+
+//* 'Alert' es un componente que se utiliza para mostrar mensajes emergentes en la aplicación. Se utiliza para mostrar mensajes de error o
+//* confirmación. El método 'alert()' recibe dos parámetros, el primero es el título del mensaje y el segundo es el contenido del mensaje.
+
 const LoginScreen = () => {
   const { height } = useWindowDimensions();
+  const backgroundColor = useThemeColor({}, "background");
+
+  const { login } = useAuthStore();
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const onLogin = async () => {
+    const { email, password } = form;
+
+    if (email.length === 0 || password.length === 0) {
+      console.log("Email y contraseña son requeridos");
+      return;
+    }
+
+    setIsPosting(true);
+    const wasSuccessfull = await login(email, password);
+    setIsPosting(false);
+
+    if (wasSuccessfull) {
+      router.replace("/");
+      return;
+    }
+
+    Alert.alert("Error", "Usuario o contraseña no son correctos");
+  };
+
   return (
-    <KeyboardAvoidingView behavior="padding">
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <ScrollView
         style={{
           paddingHorizontal: 40,
+          backgroundColor: backgroundColor,
         }}
       >
         {/* Titulo y subtitulo login */}
@@ -42,6 +90,8 @@ const LoginScreen = () => {
         {/* Email y password */}
         <View style={{ marginTop: 20 }}>
           <ThemedTextInput
+            value={form.email}
+            onChangeText={(value) => setForm({ ...form, email: value })}
             placeholder="Correo electrónico"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -49,6 +99,8 @@ const LoginScreen = () => {
           />
 
           <ThemedTextInput
+            value={form.password}
+            onChangeText={(value) => setForm({ ...form, password: value })}
             placeholder="Contraseña"
             secureTextEntry
             autoCapitalize="none"
@@ -59,7 +111,13 @@ const LoginScreen = () => {
         <View style={{ marginTop: 10 }} />
 
         {/* Boton ingresar */}
-        <ThemeButton icon="arrow-forward-outline">Ingresar</ThemeButton>
+        <ThemeButton
+          onPress={onLogin}
+          icon="arrow-forward-outline"
+          disabled={isPosting}
+        >
+          Ingresar
+        </ThemeButton>
 
         <View style={{ marginTop: 50 }} />
 

@@ -29,13 +29,18 @@ export const authLogin = async (email: string, password: string) => {
     console.log(error);
     return null;
 
-    // throw new Error("User and/or password not valid");
   }
 };
 
-export const authCheckStatus = async () => {
+export const authRegister = async (fullName: string, email: string, password: string) => { 
+  email = email.toLocaleLowerCase();
+
   try {
-    const { data } = await productsApi.get<AuthResponse>("/auth/check-status");
+    const { data } = await productsApi.post<AuthResponse>("/auth/register", {
+      fullName,
+      email,
+      password,
+    });
 
     return returnUserToken(data);
   } catch (error) {
@@ -44,4 +49,15 @@ export const authCheckStatus = async () => {
   }
 };
 
-// TODO: Register
+export const authCheckStatus = async () => {
+  try {
+    const { data } = await productsApi.get<AuthResponse>("/auth/check-status");
+    // console.log(JSON.stringify(returnUserToken(data), null, 2));
+
+    return returnUserToken(data);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+

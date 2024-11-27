@@ -1,21 +1,36 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 
-import { useColorScheme } from '@/presentation/theme/hooks/useColorScheme.web';
-import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
+import { useColorScheme } from "@/presentation/theme/hooks/useColorScheme.web";
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import 'react-native-reanimated';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
 
 //* <GestureHandlerRootView> es un componente que se utiliza para envolver toda la aplicación y habilitar los gestos en la misma.
 //* Habilita funcionalidades como el desplazamiento de la pantalla y el deslizamiento de elementos.
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+//* {queries : {retry: false}}: Deshabilita la opción de reintentar las consultas en caso de error. Es decir, si una consulta falla,
+//* no se volverá a intentar realizar la solicitud hasta que el usuario lo solicite.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -42,16 +57,17 @@ export default function RootLayout() {
     <GestureHandlerRootView
       style={{ backgroundColor: backgroundColor, flex: 1 }}
     >
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" /> */}
-        </Stack>
-      </ThemeProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          ></Stack>
+        </ThemeProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

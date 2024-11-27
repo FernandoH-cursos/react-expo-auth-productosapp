@@ -1,1 +1,2 @@
-export * from './secure-storage.adapter';
+export * from "./formatter.adapter";
+export * from "./secure-storage.adapter";

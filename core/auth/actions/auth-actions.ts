@@ -1,4 +1,4 @@
-import { productsApi } from "../api/productsApi";
+import { productsApi } from "@/core/api/productsApi";
 
 export interface AuthResponse {
   id: string;
@@ -28,7 +28,6 @@ export const authLogin = async (email: string, password: string) => {
   } catch (error) {
     console.log(error);
     return null;
-
   }
 };
 

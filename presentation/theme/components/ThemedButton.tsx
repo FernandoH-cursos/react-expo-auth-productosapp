@@ -1,33 +1,43 @@
 import { useThemeColor } from "../hooks/useThemeColor";
 
-import { View, PressableProps, Pressable, Text } from "react-native";
+import { PressableProps, Pressable, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 
 interface Props extends PressableProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   icon?: keyof typeof Ionicons.glyphMap;
+  iconColor?: string;
 }
 
-export const ThemeButton = ({ children, icon, ...rest }: Props) => {
+export const ThemedButton = ({ children, icon,iconColor = "white", ...rest }: Props) => {
   const primaryColor = useThemeColor({}, "primary");
   return (
     <Pressable
       style={({ pressed }) => [
         {
-          backgroundColor: pressed ? primaryColor + "90" : primaryColor,
+          backgroundColor: children
+            ? pressed
+              ? primaryColor + "90"
+              : primaryColor
+            : "transparent",
+          color: !children
+            ? pressed
+              ? iconColor + "80"
+              : primaryColor
+            : "transparent",
         },
-        styles.button,
+        children ? styles.button : "",
       ]}
       {...rest}
     >
-      <Text style={{ color: "white" }}>{children}</Text>
+      {children && <Text style={{ color: "white" }}>{children}</Text>}
 
       {icon && (
         <Ionicons
           name={icon}
           size={24}
-          color="white"
+          color={iconColor}
           style={{ marginHorizontal: 5 }}
         />
       )}

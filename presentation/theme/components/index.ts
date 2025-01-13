@@ -1,4 +1,6 @@
 export * from './ExternalLink';
+export * from './FAB';
+export * from './MenuIconButton';
 export * from './ThemeLink';
 export * from './ThemedButton';
 export * from './ThemedButtonGroup';

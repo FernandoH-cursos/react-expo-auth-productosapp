@@ -1,3 +1,6 @@
+import React from "react";
+import { MenuIconButton } from "@/presentation/theme/components";
+import { router } from "expo-router";
 import { View, Image, FlatList } from "react-native";
 
 interface Props {
@@ -8,15 +11,26 @@ export const ProductImages = ({ images }: Props) => {
   
   if (images?.length == 0) {
     return (
-      <View style={{
-        flex: 1,
-        alignItems: "center",
-      }}>
-        <Image
-          source={require("../../../assets/images/no-product-image.png")}
-          style={{ width: 300, height: 300 }}
-        />
-      </View>
+      <>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={require("../../../assets/images/no-product-image.png")}
+            style={{ width: 300, height: 300 }}
+          />
+        </View>
+        <View style={{alignItems: "flex-end" }}>
+          <MenuIconButton
+            onPress={() => router.push("/camera")}
+            icon="camera-outline"
+            style={{ marginRight: 10}}
+          />
+        </View>
+      </>
     );
   }
 

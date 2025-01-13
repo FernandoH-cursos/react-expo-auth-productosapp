@@ -65,7 +65,8 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
             }}
-          ></Stack>
+          >
+          </Stack>
         </ThemeProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>

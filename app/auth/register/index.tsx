@@ -10,7 +10,7 @@ import { router } from "expo-router";
 
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import {
-  ThemeButton,
+  ThemedButton,
   ThemedText,
   ThemedTextInput,
   ThemeLink,
@@ -32,7 +32,6 @@ const RegisterScreen = () => {
 
   const onRegister = async () => {
     const { fullName, email, password } = form;
-
 
     if (fullName.length === 0 || email.length === 0 || password.length === 0) {
       console.log("Nombre, email y contraseña son requeridos");
@@ -103,9 +102,9 @@ const RegisterScreen = () => {
         <View style={{ marginTop: 10 }} />
 
         {/* Boton ingresar */}
-        <ThemeButton onPress={onRegister} icon="arrow-forward-outline">
+        <ThemedButton onPress={onRegister} icon="arrow-forward-outline">
           Crear cuenta
-        </ThemeButton>
+        </ThemedButton>
 
         <View style={{ marginTop: 50 }} />
 

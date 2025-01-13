@@ -6,45 +6,40 @@ import {
   Platform,
   View,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
 
 import { useProduct } from "@/presentation/products/hooks";
 
+import { useCameraStore } from "@/presentation/store";
 import {
-  ThemeButton,
+  ThemedButton,
   ThemedTextInput,
   ThemedView,
   ThemedButtonGroup,
 } from "@/presentation/theme/components";
 import { ProductImages } from "@/presentation/products/components";
 
-import { Ionicons } from "@expo/vector-icons";
-import { Formik } from "formik";
 import { Size } from "@/core/products/interfaces";
-import { useThemeColor } from "@/presentation/theme/hooks";
+import { Formik } from "formik";
 
 //* En <ThemedTextInput /> se puede agregar el prop `multiline` para que sea un textarea y `numberOfLines` para definir el número de
 //* líneas que se mostrarán por defecto.
 const ProductScreen = () => {
+  const { selectedImages, clearImages } = useCameraStore();
+
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
 
-  const textColor = useThemeColor({},"text");
+  const { queryProduct, productMutation } = useProduct(id as string);
 
-  const { queryProduct,productMutation } = useProduct(id as string);
-
+  //* Limpiar las imágenes seleccionadas cuando se desmonte el componente.
+  //* Es decir, cuando el usuario navegue a otra pantalla. 
   useEffect(() => {
-    //* Agregando un icono a la derecha del header
-    navigation.setOptions({
-      headerRight: () => (
-        <Ionicons
-          name="camera-outline"
-          size={25}
-          style={{ color: textColor }}
-        />
-      ),
-    });
+    return () => {
+      clearImages();
+    };
   }, []);
 
   useEffect(() => {
@@ -74,14 +69,24 @@ const ProductScreen = () => {
   return (
     <Formik
       initialValues={product}
-      onSubmit={(productLike) => productMutation.mutate(productLike)}
+      onSubmit={(productLike) => productMutation.mutate({
+        ...productLike,
+        images: [...product.images, ...selectedImages],
+      })}
     >
       {({ values, handleSubmit, handleChange, setFieldValue }) => (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <ScrollView>
-            <ProductImages images={values.images} />
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={queryProduct.isFetching}
+                onRefresh={async() => await queryProduct.refetch()}
+              />
+            }
+          >
+            <ProductImages images={[...product.images, ...selectedImages]} />
 
             <ThemedView style={{ marginHorizontal: 10, marginTop: 20 }}>
               <ThemedTextInput
@@ -135,7 +140,9 @@ const ProductScreen = () => {
                 options={sizesOptions}
                 selectedOptions={values.sizes}
                 onSelect={(selectedSize) => {
-                  const newSizesValue = values.sizes.includes(selectedSize as Size)
+                  const newSizesValue = values.sizes.includes(
+                    selectedSize as Size
+                  )
                     ? values.sizes.filter((size) => size !== selectedSize)
                     : [...values.sizes, selectedSize];
 
@@ -160,12 +167,9 @@ const ProductScreen = () => {
                 marginTop: 20,
               }}
             >
-              <ThemeButton
-                icon="save-outline"
-                onPress={() => handleSubmit()}
-              >
+              <ThemedButton icon="save-outline" onPress={() => handleSubmit()}>
                 Guardar
-              </ThemeButton>
+              </ThemedButton>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>

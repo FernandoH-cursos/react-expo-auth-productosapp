@@ -12,7 +12,7 @@ import { router } from "expo-router";
 import { useThemeColor } from "@/presentation/theme/hooks";
 
 import {
-  ThemeButton,
+  ThemedButton,
   ThemedText,
   ThemedTextInput,
   ThemeLink,
@@ -111,13 +111,13 @@ const LoginScreen = () => {
         <View style={{ marginTop: 10 }} />
 
         {/* Boton ingresar */}
-        <ThemeButton
+        <ThemedButton
           onPress={onLogin}
           icon="arrow-forward-outline"
           disabled={isPosting}
         >
           Ingresar
-        </ThemeButton>
+        </ThemedButton>
 
         <View style={{ marginTop: 50 }} />
 

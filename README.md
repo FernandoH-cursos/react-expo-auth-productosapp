@@ -1,5 +1,10 @@
 # App de productos con autenticación, mantenedor y carga de imágenes.
 
+## Usa el siguiente backend:
+
+**Teslo shop:** [API productos](https://github.com/Klerith/tesloshop-backend) 
+
+
 ## Products App - Autenticación
 
 #### - JWTs.
